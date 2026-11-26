@@ -25,8 +25,7 @@ llist* listCreate()
     return list;
 }
 
-llError listDelete(llist *list)
-{
+llError listDelete(llist *list) {
     llError result = NullNode;
 
     if (list != NULL)
