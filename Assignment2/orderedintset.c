@@ -12,27 +12,33 @@
 /* create an empty order set
  * @return pointer ot see if successful, NULL allocation failure
  * */
-intSet* createOrderedSet()
+intSet* createOrderedSet(void)
 {
-    intSet* s=(intSet*)malloc(sizeof(intSet));
-    if (s!= NULL){
-        s->list = listCreate();
-        if (s->list != NULL){
-            s -> count = 0;
-        }else{
-            free(s);
-            s = NULL;
-        }
+    intSet *s = malloc(sizeof(intSet));
+
+    if (s == NULL)
+        return NULL;
+
+    s->list = listCreate();
+
+    if (s->list == NULL)
+    {
+        free(s);
+        return NULL;
     }
+
+    s->count = 0;
+
     return s;
 }
 
 /*remove order set form the memory
  * @param s pointer to callid set to be deleted*/
 
-void deleteOrderedSet(intSet* s)
+void deleteOrderedSet(intSet *s)
 {
-    if( s!= NULL) {
+    if (s != NULL)
+    {
         listDelete(s->list);
         free(s);
     }
@@ -48,35 +54,45 @@ void deleteOrderedSet(intSet* s)
 
 //start at header and traverse the list
 
-setError addElement(intSet* s, int elem)
-{
-    if (s == NULL || s->list == NULL) return ALLOCATION_ERROR;
-    int currentData;
+setError addElement(intSet *s, int elem) {
+    data *current;
+    data newData;
+
+    if (s == NULL || s->list == NULL)
+        return ALLOCATION_ERROR;
+
+    newData.id = elem;
+    newData.name[0] = '\0';
+    newData.description[0] = '\0';
 
     gotoHead(s->list);
-    while (gotoNextNode(s->list)== OK){
-        if(getData(s->list, &currentData) == OK){
-            if(currentData ==elem){
-                return NUMBER_ALREADY_IN_SET;
+
+    current = getData(s->list);
+
+    while (current != NULL)
+    {
+        if (current->id == elem)
+            return NUMBER_ALREADY_IN_SET;
+
+        if (current->id > elem) {
+            if (insertBefore(&newData, s->list) == OK) {
+                s->count++;
+                return NUMBER_ADDED;
             }
-            //INSERT BEFORE The larger element
-            if( currentData > elem){
-                if (dllInsetBefre(s->list, elem) = OK){
-                    s->count++;
-                    return NUMBER_ADDED;
-                }else{
-                    return ALLOCATION_ERROR;
-                }
-            }
+            return ALLOCATION_ERROR;
         }
+
+        if (gotoNextNode(s->list) != OK)
+            break;
+
+        current = getData(s->list);
     }
 
-
-    // if larger than all elements the insert this to end:
-    if(insertBefore(s->list, elem) == OK){
+    if (insertAfter(&newData, s->list) == OK) {
         s->count++;
         return NUMBER_ADDED;
     }
+
     return ALLOCATION_ERROR;
 }
 
@@ -86,29 +102,33 @@ setError addElement(intSet* s, int elem)
  *  @return NUMBER_REMOVED id removed,
  *  NUMBER_NOT_IN_SET if not foun */
 
-setError removeElement(intSet* s, int elem)
+setError removeElement(intSet *s, int elem)
 {
-    if (s == NULL || s->list == NULL) return ALLOCATION_ERROR;
-    int currentData;
+    data *current;
+
+    if (s == NULL || s->list == NULL)
+        return ALLOCATION_ERROR;
 
     gotoHead(s->list);
-    while (gotoNextNode(s->list)== OK){
-        if(getData(s->list, &currentData) == OK){
-            if(currentData ==elem){
 
-                // delete current node here
-                if(dllDeleteCurrent(s->list) == OK){
-                    s->count--;
-                    return NUMBER_REMOVED;
+    current = getData(s->list);
 
-                }
-            }
-            //BREAK earlt if we pass the number since the set is ordered
-            if (currentData > elem){
-                break;
+    while (current != NULL) {
+        if (current->id == elem) {
+            if (deleteCurrent(s->list) == OK) {
+                s->count--;
+                return NUMBER_REMOVED;
             }
         }
+
+        if (current->id > elem)
+            break;
+
+        if (gotoNextNode(s->list) != OK)
+            break;
+        current = getData(s->list);
     }
+
     return NUMBER_NOT_IN_SET;
 }
 
@@ -118,30 +138,48 @@ setError removeElement(intSet* s, int elem)
  *  @param s2 second set
  *  @return new set contating intersecton or NULL on failure*/
 
-intSet* setIntersection(intSet* s1, intSet* s2)
-{
-    intSet* result = createOrderSet();
-    if(result == NULL) return NULL;
-    if(s1 ==NULL || s2==NULL) return result;
-    int val1, val2;
+intSet* setIntersection(intSet *s1, intSet *s2) {
+    intSet *result;
+    data *d1;
+    data *d2;
+
+    result = createOrderedSet();
+
+    if (result == NULL)
+        return NULL;
+
+    if (s1 == NULL || s2 == NULL)
+        return result;
 
     gotoHead(s1->list);
-    while (gotoNextNode(s1->list) == OK) {
-        if (getData(s1->list, &val1) == OK) {
-            gotoHead(s2->list);
-            while (gotoNextNode(s2->list) == OK) {
-                if (getData(s2->list, &val2) == OK) {
-                    if (val1 == val2) {
-                        addElement(result, val1);
-                        break;
-                    }
-                    if (val2 > val1) break;
-                }
+
+    d1 = getData(s1->list);
+
+    while (d1 != NULL)  {
+        gotoHead(s2->list);
+
+        d2 = getData(s2->list);
+
+        while (d2 != NULL)
+        {
+            if (d1->id == d2->id)   {
+                addElement(result, d1->id);
+                break;
             }
+
+            if (gotoNextNode(s2->list) != OK)
+                break;
+
+            d2 = getData(s2->list);
         }
+        if (gotoNextNode(s1->list) != OK)
+            break;
+        d1 = getData(s1->list);
     }
+
     return result;
 }
+
 
 /**
  * computes union of s1 and s2
@@ -150,27 +188,48 @@ intSet* setIntersection(intSet* s1, intSet* s2)
  * @param s2 second set
  * @return new set containing union, NULL on failure
  */
-intSet* setUnion(intSet* s1, intSet* s2)
+intSet* setUnion(intSet *s1, intSet *s2)
 {
-    intSet* result = createOrderedSet();
-    if (result == NULL) return NULL;
-    if (s1 == NULL || s2 == NULL) return result;
+    intSet *result;
+    data *d;
 
-    int val;
+    result = createOrderedSet();
 
-    gotoHead(s1->list);
-    while (gotoNextNode(s1->list) == ok) {
-        if (getData(s1->list, &val) == ok) addElement(result, val);
+    if (result == NULL)
+        return NULL;
+
+    if (s1 != NULL) {
+        gotoHead(s1->list);
+
+        d = getData(s1->list);
+
+        while (d != NULL)
+        {
+            addElement(result, d->id);
+
+            if (gotoNextNode(s1->list) != OK)
+                break;
+
+            d = getData(s1->list);
+        }
     }
 
-    gotoHead(s2->list);
-    while (gotoNextNode(s2->list) == ok) {
-        if (getData(s2->list, &val) == ok) addElement(result, val);
-    }
+    if (s2 != NULL) {
+        gotoHead(s2->list);
 
+        d = getData(s2->list);
+
+        while (d != NULL)  {
+            addElement(result, d->id);
+
+            if (gotoNextNode(s2->list) != OK)
+                break;
+
+            d = getData(s2->list);
+        }
+    }
     return result;
 }
-
 /**
  * computes difference of s1 and s2 (s1 - s2)
  *
@@ -178,120 +237,78 @@ intSet* setUnion(intSet* s1, intSet* s2)
  * @param s2 second set
  * @return new set containing difference, NULL on failure
  */
-intSet* setDifference(intSet* s1, intSet* s2)
-{
-    intSet* result = createOrderedSet();
-    if (result == NULL) return NULL;
-    if (s1 == NULL) return result;
+intSet* setDifference(intSet *s1, intSet *s2) {
+    intSet *result;
+    data *d1;
+    data *d2;
+    int found;
 
-    int val1, val2;
-    int foundInS2;
+    result = createOrderedSet();
+
+    if (result == NULL)
+        return NULL;
+
+    if (s1 == NULL)
+        return result;
 
     gotoHead(s1->list);
-    while (gotoNextNode(s1->list) == OK) {
-        if (getData(s1->list, &val1) == OK) {
-            foundInS2 = 0;
+    d1 = getData(s1->list);
 
+    while (d1 != NULL){
+        found = 0;
 
-            if (s2 != NULL) {
-                gotoHead(s2->list);
-                while (gotoNextNode(s2->list) == OK) {
-                    if (getData(s2->list, &val2) == OK) {
-                        if (val1 == val2) {
-                            foundInS2 = 1;
-                            break;
-                        }
-                        if (val2 > val1) break;
-                    }
+        if (s2 != NULL)  {
+            gotoHead(s2->list);
+
+            d2 = getData(s2->list);
+
+            while (d2 != NULL)  {
+                if (d1->id == d2->id) {
+                    found = 1;
+                    break;
                 }
+
+                if (gotoNextNode(s2->list) != OK)
+                    break;
+
+                d2 = getData(s2->list);
             }
-            if (!foundInS2) addElement(result, val1);
         }
-    }
-    return result;
 
-}
-/**
- * compute union of s1 and s2
- * @param s1 first set
- * @param s2 second set
- * @return new set conatining union, NULL on failure
- */
+        if (!found)
+            addElement(result, d1->id);
 
-intSet* setUnion(intSet* s1, intSet* s2){
-    intSet* result = createOrderSet();
-    if(result==NULL) return NULL;
-    if( s1==NULL || s2==NULL)return result;
-    int val;
+        if (gotoNextNode(s1->list) != OK)
+            break;
 
-    gotoHead(s1->list);
-    while(gotoNextNode(s1->list)==OK) {
-        if(getData(s1->list, &val) == OK) addElement(result, val);
-
-    }
-    gotoHead(s2->list);
-    while(gotoNextNode(s2->list)== OK){
-        if(getData(s2->list, &val) == OK) addElement(result, val);
-
+        d1 = getData(s1->list);
     }
     return result;
 }
 
-/**
- *  compute difference of s1 and s2
- *  @param s1 first set
- *  @param s2 second set
- *  @return new set containg difference, null on failure*/
-int*
-    
-    intSet* setDifference(intSet* s1, intSet* s2)
-{
-    intSet* result= createOrderedSet();
-    if(result ==NULL) return NULL;
-    if(s1 ==NULL) return result;
-    int val1, val2;
-    int foundIns2;
+void printToStdout(intSet *s) {
+    data *d;
+    int first = 1;
 
-    gotoHead(s1->list);
-    while(gotoNextNode(s1->list) ==ok){
-        if(getData(s1->list, &val1) == ok){
-            foundInS2 = 0;
-
-            if(s2 !=NULL){
-                gotoHead(s2->list);
-                while (gotoNextNode (s2->list)==ok){
-                    if(getData(s2->list, &val2) ==ok){
-                        if(val1 == val2){
-                            foundInS2 = 1;
-                            break;
-
-                        }
-                        if(val2>val1) break;
-                    }
-                }
-            }
-            if( !foundInS2) addElement(result, val1);
-        }
-    }
-    return result;
-}
-/**
- * pritns the set in format{Num1..} to stdout
- * empty set is denoted{}
- * @param s pointer to valid set*/
-void printToStdout(intSet*s){
     printf("{");
-    if(s!= NULL && s->list != NULL){
-        int val;
-        int isFirst = 1;
-
+    if (s != NULL && s->list != NULL) {
         gotoHead(s->list);
-        while(gotoNextNode(s->list) == OK){
-            if(getData(s->list, &val) == OK){
-                if(!isFirst) printf(", ");
-                printf("%d", val);
-                isFirst = 0;
-            }
+
+        d = getData(s->list);
+
+        while (d != NULL)
+        {
+            if (!first)
+                printf(", ");
+
+            printf("%d", d->id);
+
+            first = 0;
+
+            if (gotoNextNode(s->list) != OK)
+                break;
+
+            d = getData(s->list);
         }
     }
     printf("}");
