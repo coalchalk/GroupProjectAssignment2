@@ -144,9 +144,15 @@ llError insertAfter(data* d, llist* list) {
     return result;
 }
 
-llError insertBefore(int *d, llist *list) {
+llError insertBefore(data *d, llist *list) {
     llError result = NullNode;
     llnode *newnode;
+
+	if (list == NULL ||
+    list->current == NULL ||
+    list->current == list->head) {
+    return IllegalNode;
+}
 
     if (list != NULL && list->current != NULL) {
         newnode = (llnode *)malloc(sizeof(llnode));
@@ -164,10 +170,6 @@ llError insertBefore(int *d, llist *list) {
             }
 
             list->current->predecessor = newnode;
-
-            if (list->current == list->head) {
-                list->head = newnode;
-            }
 
             result = OK;
         }
