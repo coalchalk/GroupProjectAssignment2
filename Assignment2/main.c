@@ -1,3 +1,9 @@
+/**@file orderSet.c
+ * implementing order int set using double linked list
+ *
+ * @author	Cahira
+ * @date	26.10.2013
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "orderedIntSet.h"
