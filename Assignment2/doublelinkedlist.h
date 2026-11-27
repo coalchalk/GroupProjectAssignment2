@@ -23,6 +23,7 @@ typedef struct n {
 
 typedef struct {
     llnode* head; ///< pointer to head of list
+	llnode* tail; ///< pointer to tail of list
     llnode* current; ///< current node of list
 } llist;
 
