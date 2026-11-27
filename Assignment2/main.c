@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "orderedIntSet.h"
+#include "doublelinkedlist.h"
 
 int main(void) {
     // Array of 10 set pointers, all starting empty
