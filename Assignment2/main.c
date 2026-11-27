@@ -1,5 +1,5 @@
-/**@file orderSet.c
- * implementing order int set using double linked list
+/**@file main.c
+ * main function of program
  *
  * @author	Cahira
  * @date	26.10.2013
