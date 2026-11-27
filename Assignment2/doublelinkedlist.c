@@ -2,13 +2,11 @@
 #include <stdlib.h>
 #include "doublelinkedlist.h"
 
-llist* listCreate()
-{
+llist* listCreate() {
     llist* list;
     list = (llist*)malloc(sizeof(llist));
 
-    if (list != NULL)
-    {
+    if (list != NULL) {
         list->head = (llnode*)malloc(sizeof(llnode));
 
        if (list->head != NULL) {
@@ -48,8 +46,7 @@ llError listDelete(llist *list) {
     return result;
 }
 
-int* getData(llist *list)
-{
+int* getData(llist *list) {
     if (list != NULL &&
         list->current != NULL &&
         list->current != list->head)
@@ -60,8 +57,7 @@ int* getData(llist *list)
     return NULL;
 }
 
-llError gotoNextNode(llist* list)
-{
+llError gotoNextNode(llist* list) {
     llError result = NullNode;
     if (list != NULL) {
         result = OK;
@@ -77,8 +73,7 @@ llError gotoNextNode(llist* list)
 	return result;
 }
 
-llError gotoPreviousNode(llist* list)
-{
+llError gotoPreviousNode(llist* list) {
     llError result = NullNode;
 
     if (list != NULL && list->current != NULL)
@@ -97,8 +92,7 @@ llError gotoPreviousNode(llist* list)
     return result;
 }
 
-llError gotoHead(llist* list)
-{
+llError gotoHead(llist* list) {
     llError result = NullNode;
     if (list != NULL) {
         result = OK;
@@ -108,8 +102,7 @@ llError gotoHead(llist* list)
     return result;
 }
 
-llError gotoTail(llist* list)
-{
+llError gotoTail(llist* list) {
     llError result = NullNode;
     if (list != NULL) {
         result = OK;
@@ -118,3 +111,68 @@ llError gotoTail(llist* list)
     }
     return result;
 }
+
+llError insertAfter(data* d, llist* list) {
+    llError result = NullNode;
+    llnode *newnode;
+
+    if (list != NULL && list->current != NULL) {
+        newnode = (llnode*)malloc(sizeof(llnode));
+
+        if (newnode == NULL) {
+            result = NoMemory;
+        } else {
+            newnode->data = *d;
+
+            newnode->successor = list->current->successor;
+            newnode->predecessor = list->current;
+
+            if (list->current->successor != NULL) {
+                list->current->successor->predecessor = newnode;
+            }
+
+            list->current->successor = newnode;
+
+            if (list->tail == list->current) {
+                list->tail = newnode;
+            }
+
+            result = OK;
+        }
+    }
+
+    return result;
+}
+
+llError insertBefore(int *d, llist *list) {
+    llError result = NullNode;
+    llnode *newnode;
+
+    if (list != NULL && list->current != NULL) {
+        newnode = (llnode *)malloc(sizeof(llnode));
+
+        if (newnode == NULL) {
+            result = NoMemory;
+        } else {
+            newnode->data = *d;
+
+            newnode->successor = list->current;
+            newnode->predecessor = list->current->predecessor;
+
+            if (list->current->predecessor != NULL) {
+                list->current->predecessor->successor = newnode;
+            }
+
+            list->current->predecessor = newnode;
+
+            if (list->current == list->head) {
+                list->head = newnode;
+            }
+
+            result = OK;
+        }
+    }
+    return result;
+}
+
+
