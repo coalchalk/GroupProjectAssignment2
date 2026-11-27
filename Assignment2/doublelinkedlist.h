@@ -32,7 +32,7 @@ typedef struct {
  * Defines structure for a node of double linked list
  */
 typedef struct llnode {
-    data data;
+    data d;
     struct llnode *successor;
     struct llnode *predecessor;
 } llnode;
