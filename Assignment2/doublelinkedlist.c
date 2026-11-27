@@ -11,12 +11,13 @@ llist* listCreate()
     {
         list->head = (llnode*)malloc(sizeof(llnode));
 
-        if (list->head != NULL)
-        {
-            list->head->successor = NULL;
-            list->head->predecessor = NULL;
+       if (list->head != NULL) {
+    		list->head->data = 0;
+    		list->head->successor = NULL;
+   		 	list->head->predecessor = NULL;
 
-            list->current = list->head;
+    		list->current = list->head;
+    		list->tail = list->head;
         } else {
             free(list);
             list = NULL;
@@ -74,4 +75,46 @@ llError gotoNextNode(llist* list)
         }
     }
 	return result;
+}
+
+llError gotoPreviousNode(llist* list)
+{
+    llError result = NullNode;
+
+    if (list != NULL && list->current != NULL)
+    {
+        if (list->current->predecessor != NULL)
+        {
+            list->current = list->current->predecessor;
+            result = OK;
+        }
+        else
+        {
+            result = IllegalNode;
+        }
+    }
+
+    return result;
+}
+
+llError gotoHead(llist* list)
+{
+    llError result = NullNode;
+    if (list != NULL) {
+        result = OK;
+        // reset current to head
+        list->current = list->head;
+    }
+    return result;
+}
+
+llError gotoTail(llist* list)
+{
+    llError result = NullNode;
+    if (list != NULL) {
+        result = OK;
+        // reset current to head
+        list->current = list->tail;
+    }
+    return result;
 }
