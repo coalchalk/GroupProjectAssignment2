@@ -2,7 +2,7 @@
  * @file orderSet.h
  * header file for ordered int set implementation
  * using double linked list
- * 
+ *
  * @author	Sania & Aisling
  * @date	26.10.2013
  */
@@ -29,8 +29,8 @@ typedef struct {
 } intSet;
 
 /* function declarations*/
-intSet* createOrderSet();
-void deleteOrderSet(intSet* s);
+intSet* createOrderedSet(void);
+void deleteOrderedSet(intSet* s);
 setError addElement(intSet* s, int elem);
 intSet* setIntersection(intSet* s1, intSet* s2);
 intSet* setUnion(intSet* s1, intSet* s2);
