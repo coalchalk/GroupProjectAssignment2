@@ -70,9 +70,13 @@ llError listDelete(llist *list) {
  *
  * @param list List to access.
  * @return Pointer to current node's data, or NULL if
- * the current node is head or tail.
+ *      the current node is the head node or invalid.
  */
-    if (list != NULL &&  list->current != NULL && list->current != list->head) {
+data* getData(llist *list)
+{
+    if (list != NULL &&
+        list->current != NULL &&
+        list->current != list->head) {
         return &(list->current->d);
     }
     return NULL;
@@ -105,8 +109,8 @@ llError gotoNextNode(llist* list) {
  * @brief Moves the current node to its predecessor.
  *
  * @param list List to traverse.
- * @return OK on success, IllegalNode if the current node is
- *         the last node in the list, or NullNode if list is NULL.
+ * @return OK on success, IllegalNode if the current node has
+ * no predecessor, or NullNode if list is NULL.
  */
 llError gotoPreviousNode(llist* list) {
     llError result = NullNode;
@@ -225,7 +229,7 @@ llError insertBefore(data *d, llist *list) {
         if (newnode == NULL) {
             result = NoMemory;
         } else {
-            newnode->data = *d;
+            newnode->d = *d;
 
             newnode->successor = list->current;
             newnode->predecessor = list->current->predecessor;
