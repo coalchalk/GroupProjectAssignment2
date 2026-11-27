@@ -2,7 +2,7 @@
  * @file doublelinkedlist.c
  * Implementing a double linked list
  *
- * author:	
+ * author:	Chloe
  * date:	26.10.2013
  */
 #include <stdio.h>
