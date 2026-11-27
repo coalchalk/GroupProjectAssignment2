@@ -2,6 +2,9 @@
  * @file orderSet.h
  * header file for ordered int set implementation
  * using double linked list
+ * 
+ * @author	Sania & Aisling
+ * @date	26.10.2013
  * */
 #ifndef ORDERSET_H
 #define ORDERSET_H
