@@ -15,7 +15,7 @@ typedef struct {
 } data;
 
 typedef struct llnode {
-    data d;
+    data data;
     struct llnode *successor;
     struct llnode *predecessor;
 } llnode;
