@@ -46,14 +46,10 @@ llError listDelete(llist *list) {
     return result;
 }
 
-int* getData(llist *list) {
-    if (list != NULL &&
-        list->current != NULL &&
-        list->current != list->head)
-    {
-        return &(list->current->data);
+data* getData(llist *list) {
+    if (list != NULL &&  list->current != NULL && list->current != list->head) {
+        return &(list->current->d);
     }
-
     return NULL;
 }
 
