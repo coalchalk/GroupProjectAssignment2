@@ -10,7 +10,9 @@ llist* listCreate() {
         list->head = (llnode*)malloc(sizeof(llnode));
 
        if (list->head != NULL) {
-    		list->head->data = 0;
+    		list->head->d.id = 0;
+			list->head->d.name[0] = '\0';
+			list->head->d.description[0] = '\0';
     		list->head->successor = NULL;
    		 	list->head->predecessor = NULL;
 
