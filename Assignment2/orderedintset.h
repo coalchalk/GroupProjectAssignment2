@@ -1,14 +1,14 @@
-/*
+/**
  * @file orderSet.h
  * header file for ordered int set implementation
  * using double linked list
  * 
  * @author	Sania & Aisling
  * @date	26.10.2013
- * */
+ */
 #ifndef ORDERSET_H
 #define ORDERSET_H
-#include doubleLinedList.h
+#include "doublelinkedlist.h"
 
 /**
  * define error codes for ordered set operations
@@ -24,7 +24,7 @@ typedef enum {
 /*define struct for ordered int set
  * */
 typedef struct {
-    doubleLinkedList* list; //
+    llist* list; //
     int count; // number of element are stored in the set
 } intSet;
 
@@ -38,4 +38,3 @@ intSet* setDifference(intSet* s1, intSet* s2);
 void printToStdout(intSet* s);
 
 #endif // ORDERSET_H
-
