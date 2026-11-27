@@ -47,4 +47,31 @@ llError listDelete(llist *list) {
     return result;
 }
 
+int* getData(llist *list)
+{
+    if (list != NULL &&
+        list->current != NULL &&
+        list->current != list->head)
+    {
+        return &(list->current->data);
+    }
 
+    return NULL;
+}
+
+llError gotoNextNode(llist* list)
+{
+    llError result = NullNode;
+    if (list != NULL) {
+        result = OK;
+        // is successor of current tail?
+        if (list->current->successor != NULL) {
+            // no -> move forward
+            list->current = list->current->successor;
+        } else {
+            // reached end of list, cannot move any further
+            result = IllegalNode;
+        }
+    }
+	return result;
+}
