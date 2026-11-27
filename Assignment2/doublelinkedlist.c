@@ -175,4 +175,33 @@ llError insertBefore(int *d, llist *list) {
     return result;
 }
 
+llError deleteCurrent(llist* list) {
+    llError result = NullNode;
 
+    if (list != NULL && list->current != NULL)
+    {
+        if (list->current == list->head) {
+            result = IllegalNode;
+        }  else {
+            llnode *pred = list->current->predecessor;
+            llnode *succ = list->current->successor;
+
+            pred->successor = succ;
+
+            if (succ != NULL) {
+                succ->predecessor = pred;
+            }
+
+            if (list->current == list->tail) {
+                list->tail = pred;
+            }
+
+            free(list->current);
+
+            list->current = pred;
+
+            result = OK;
+        }
+    }
+    return result;
+}
