@@ -2,7 +2,7 @@
  * @file doublelinkedlist.h
  * Header file for double linked list implementation
  *
- * @author	
+ * @author	Chloe
  * @date	26.10.2013
  */
 
