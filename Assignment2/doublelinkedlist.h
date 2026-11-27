@@ -26,6 +26,12 @@ typedef struct {
     llnode* current; ///< current node of list
 } llist;
 
+typedef struct llnode {
+    int data;
+    struct llnode *successor;
+    struct llnode *predecessor;
+} llnode;
+
 llist* listCreate();
 llError listDelete(llist* list);
 data* accessData(llist* list);
